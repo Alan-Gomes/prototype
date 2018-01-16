@@ -1,0 +1,76 @@
+{"frames": [
+
+{
+	"filename": "MEDIUM_0000_Capa-1.png",
+	"frame": {"x":1,"y":1,"w":41,"h":42},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":42},
+	"sourceSize": {"w":41,"h":42}
+},
+{
+	"filename": "MEDIUM_0001_Capa-2.png",
+	"frame": {"x":44,"y":1,"w":41,"h":42},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":42},
+	"sourceSize": {"w":41,"h":42}
+},
+{
+	"filename": "MEDIUM_0002_Capa-3.png",
+	"frame": {"x":130,"y":1,"w":36,"h":42},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":0,"w":36,"h":42},
+	"sourceSize": {"w":41,"h":42}
+},
+{
+	"filename": "MEDIUM_0003_Capa-4.png",
+	"frame": {"x":206,"y":1,"w":25,"h":42},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":0,"w":25,"h":42},
+	"sourceSize": {"w":41,"h":42}
+},
+{
+	"filename": "MEDIUM_0004_Capa-5.png",
+	"frame": {"x":260,"y":1,"w":11,"h":42},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":15,"y":0,"w":11,"h":42},
+	"sourceSize": {"w":41,"h":42}
+},
+{
+	"filename": "MEDIUM_0005_Capa-6.png",
+	"frame": {"x":233,"y":1,"w":25,"h":42},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":8,"y":0,"w":25,"h":42},
+	"sourceSize": {"w":41,"h":42}
+},
+{
+	"filename": "MEDIUM_0006_Capa-7.png",
+	"frame": {"x":168,"y":1,"w":36,"h":42},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":3,"y":0,"w":36,"h":42},
+	"sourceSize": {"w":41,"h":42}
+},
+{
+	"filename": "MEDIUM_0007_Capa-8.png",
+	"frame": {"x":87,"y":1,"w":41,"h":42},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":42},
+	"sourceSize": {"w":41,"h":42}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "coin.png",
+	"format": "RGBA8888",
+	"size": {"w":272,"h":44},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:99e9773dd347ccc62729f6c43e8853ed:ba280aaafac9bef0f58a9ca3d05a3c4f:37dcde439de7f7292f96409a4c62c08e$"
+}
+}

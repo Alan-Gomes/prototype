@@ -1,3 +1,4 @@
+
 export class LivesState extends Phaser.State {
 
   lives: number;

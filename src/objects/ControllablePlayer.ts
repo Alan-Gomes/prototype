@@ -1,4 +1,4 @@
-import { Player } from './Player';
+import { Player, State } from './Player';
 
 export class ControllablePlayer extends Player {
 
@@ -19,28 +19,34 @@ export class ControllablePlayer extends Player {
   }
 
   update() {
-    super.update();
-    if (this.dead) {
+    if (this.dead || this.hasState(State.DEAD)) {
+      super.update();
       return;
     }
     if (this.jumpButton.isDown && this.jumpButton.repeats == 0 && (this.body.touching.down || this.canDoubleJump)) {
       if (this.body.touching.down) {
         this.canDoubleJump = true;
-        this.jump();
+        this.state = State.JUMPING;
       } else {
         this.canDoubleJump = false;
-        this.doubleJump();
+        this.state = State.DOUBLE_JUMPING;
       }
     } else if (this.dKey.isDown) {
-      this.walkRight();
+      this.state = State.WALKING_RIGHT;
     } else if (this.aKey.isDown) {
-      this.walkLeft();
-    } else if (this.body.touching.down) {
-      this.idle();
+      this.state = State.WALKING_LEFT;
+    } else {
+      this.state = State.IDLE;
     }
-    if (this.shootButton.isDown) {
-      this.shoot();
+    if (this.shootButton.isDown && this.canShoot()) {
+      this.state = this.state | State.SHOOTING;
     }
+    super.update();
+  }
+
+  private canShoot(): boolean {
+    const { name, loop } = this.animations.currentAnim;
+    return name.indexOf('shoot') === -1 || loop;
   }
 
 }

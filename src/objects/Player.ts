@@ -1,5 +1,14 @@
 import { Bullet } from "./Bullet";
 
+export enum State {
+  IDLE = 1,
+  JUMPING = 2,
+  DOUBLE_JUMPING = 4,
+  DEAD = 8,
+  WALKING_RIGHT = 16,
+  WALKING_LEFT = 32,
+  SHOOTING = 64
+}
 
 export abstract class Player extends Phaser.Sprite {
 
@@ -7,6 +16,8 @@ export abstract class Player extends Phaser.Sprite {
   numFrames: number;
   shootTime: number;
   bullets: Bullet[];
+  state: any;
+  oldState: any;
 
   constructor(game: Phaser.Game, x: number, y: number) {
     super(game, x, y, 'player');
@@ -25,9 +36,9 @@ export abstract class Player extends Phaser.Sprite {
     this.animations.play('idle');
     this.anchor.setTo(.5, .5);
     this.numFrames = 0;
-    game.time.events.loop(100, this.aumenta, this);
     this.shootTime = 0;
     this.bullets = [];
+    game.time.events.loop(1, this.aumenta, this);
     this.body.collideWorldBounds = true;
   }
 
@@ -36,7 +47,8 @@ export abstract class Player extends Phaser.Sprite {
   }
 
   update() {
-    for (let i = this.bullets.length -1; i >= 0; i--) {
+    this.numFrames++;
+    for (let i = this.bullets.length - 1; i >= 0; i--) {
       if (!this.bullets[i].alive) {
         this.bullets.splice(i, 1);
       } else if (!this.bullets[i].inCamera) {
@@ -44,78 +56,87 @@ export abstract class Player extends Phaser.Sprite {
         this.bullets.splice(i, 1);
       }
     }
+    this.body.velocity.x = 0;
     this.body.drag.x = 0;
     this.body.drag.y = 0;
-    this.body.velocity.x = 0;
+    if (this.hasState(State.DEAD)) {
+      this.dead = true;
+      this.body.velocity.y = 0;
+      this.animations.play('dead');
+      return;
+    }
+    if (this.hasState(State.IDLE)) {
+      this.queueAnimation('idle');
+    }
+    if (this.hasState(State.JUMPING)) {
+      this.body.velocity.y = -600;
+      this.animations.play('jump');
+    }
+    if (this.hasState(State.DOUBLE_JUMPING)) {
+      this.body.velocity.y = -800;
+      this.animations.play('jump');
+      this.animations.currentAnim.frame = 0;
+    }
+    if (this.hasState(State.WALKING_RIGHT)) {
+      this.scale.x = Math.abs(this.scale.x);
+      this.body.velocity.x += 300;
+    }
+    if (this.hasState(State.WALKING_LEFT)) {
+      this.scale.x = Math.abs(this.scale.x) * -1;
+      this.body.velocity.x -= 300;
+    }
+    if (this.hasState(State.WALKING_LEFT) || this.hasState(State.WALKING_RIGHT)) {
+      if ((
+        !this.hasState(State.JUMPING) &&
+        !this.hasState(State.DOUBLE_JUMPING) &&
+        !this.hasState(State.SHOOTING)
+      ) || this.animations.currentAnim.isFinished) {
+        this.queueAnimation('run');
+      }
+    }
+    if (this.hasState(State.SHOOTING)) {
+      if (this.shootTime === 0 || this.numFrames - this.shootTime >= 5) {
+        this.shootTime = this.numFrames;
+        if (!this.hasState(State.WALKING_LEFT) && !this.hasState(State.WALKING_RIGHT)) {
+          if (this.body.touching.down) {
+            this.queueAnimation('idle_shoot');
+          } else {
+            this.queueAnimation('jump_shoot');
+          }
+        } else {
+          this.queueAnimation('run_shoot');
+        }
+        let bullet;
+        if (this.scale.x < 0) {
+          bullet = new Bullet(this.game, this.x - this.body.width, this.y, -1);
+        } else {
+          bullet = new Bullet(this.game, this.x + this.body.width, this.y, 1);
+        }
+        this.game.add.existing(bullet);
+        this.bullets.push(bullet);
+      }
+    }
+  }
+
+  private queueAnimation(name: string): void {
+    if (this.animations.currentAnim.loop) {
+      this.animations.play(name);
+    } else {
+      const current = this.animations.currentAnim;
+      current.onComplete.addOnce(() => {
+        if (current === this.animations.currentAnim) {
+          this.animations.play(name);
+        }
+      })
+    };
   }
 
   die() {
-    if (this.dead) {
-      return;
-    }
-    this.dead = true;
-    this.body.velocity.y = 0;
-    this.animations.play('dead');
+    this.state = State.DEAD;
   }
 
-  jump() {
-    this.body.velocity.y = -600;
-    this.animations.play('jump');
-  }
-
-  doubleJump() {
-    this.body.velocity.y = -800;
-    this.animations.play('jump');
-    this.animations.currentAnim.frame = 0;
-  }
-
-  walkRight() {
-    this.scale.x = Math.abs(this.scale.x);
-    this.body.velocity.x += 300;
-    const cname = this.animations.currentAnim.name;
-    if ((cname != 'jump' && cname.indexOf('shoot') == -1) || this.animations.currentAnim.isFinished) {
-      this.animations.play('run');
-    }
-  }
-
-  walkLeft() {
-    this.scale.x = Math.abs(this.scale.x) * -1;
-    this.body.velocity.x -= 300;
-    const cname = this.animations.currentAnim.name;
-    if ((cname != 'jump' && cname.indexOf('shoot') == -1) || this.animations.currentAnim.isFinished) {
-      this.animations.play('run');
-    }
-  }
-
-  shoot() {
-    if (this.shootTime > 0 && this.numFrames - this.shootTime < 5) {
-      return;
-    }
-    this.shootTime = this.numFrames;
-    if (this.body.velocity.x == 0) {
-      if (this.body.touching.down) {
-        this.animations.play('idle_shoot');
-      } else {
-        this.animations.play('jump_shoot');
-      }
-    } else {
-      this.animations.play('run_shoot');
-    }
-    let bullet;
-    if (this.scale.x < 0) {
-      bullet = new Bullet(this.game, this.x - this.body.width, this.y, -1);
-    } else {
-      bullet = new Bullet(this.game, this.x + this.body.width, this.y, 1);
-    }
-    this.game.add.existing(bullet);
-    this.bullets.push(bullet);
-  }
-
-  idle() {
-    const cname = this.animations.currentAnim.name;
-    if (cname.indexOf('shoot') == -1 || this.animations.currentAnim.isFinished) {
-      this.animations.play('idle');
-    }
+  hasState(state: State) {
+    return (this.state & state) === state;
   }
 
 }

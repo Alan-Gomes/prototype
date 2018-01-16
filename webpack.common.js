@@ -22,7 +22,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Projeto em p5.js',
+      title: 'Prototype',
       template: __dirname + '/src/index.html'
     }),
     new CleanWebpackPlugin(__dirname + '/dist'),

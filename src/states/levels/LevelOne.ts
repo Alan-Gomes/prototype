@@ -97,14 +97,14 @@ export class LevelOne extends EmptyLevel {
         child.y = -50;
       }
     });
-    this.scrollPlats1.children.forEach(child => {
+    this.scrollPlats2.children.forEach(child => {
       if (child.y < -50) {
         child.y = this.game.world.height;
       } else if (child.y > this.game.world.height) {
         child.y = -50;
       }
     })
-    this.scrollPlats1.children.forEach(child => {
+    this.scrollPlats3.children.forEach(child => {
       if (child.y < -50) {
         child.y = this.game.world.height;
       } else if (child.y > this.game.world.height) {
